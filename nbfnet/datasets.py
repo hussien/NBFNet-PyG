@@ -1,5 +1,5 @@
 import os
-
+import shutil
 import torch
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
@@ -7,6 +7,12 @@ from torch_geometric.data import Data, InMemoryDataset, download_url
 class IndRelLinkPredDataset(InMemoryDataset):
 
     urls = {
+        "FB15K": [
+            "/media/hussein/UbuntuData/GithubRepos/RGCN/data/FB15K/train.txt",
+            "/media/hussein/UbuntuData/GithubRepos/RGCN/data/FB15K/valid_profession.txt",
+            "/media/hussein/UbuntuData/GithubRepos/RGCN/data/FB15K/train.txt",
+            "/media/hussein/UbuntuData/GithubRepos/RGCN/data/FB15K/test_profession.txt",
+        ],
         "FB15k-237": [
             "https://raw.githubusercontent.com/kkteru/grail/master/data/fb237_%s_ind/train.txt",
             "https://raw.githubusercontent.com/kkteru/grail/master/data/fb237_%s_ind/test.txt",
@@ -23,9 +29,10 @@ class IndRelLinkPredDataset(InMemoryDataset):
 
     def __init__(self, root, name, version, transform=None, pre_transform=None):
         self.name = name
+
         self.version = version
-        assert name in ["FB15k-237", "WN18RR"]
-        assert version in ["v1", "v2", "v3", "v4"]
+        assert name in ["FB15k-237", "WN18RR","FB15K"]
+        assert version in ["FG","v1", "v2", "v3", "v4"]
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -49,16 +56,23 @@ class IndRelLinkPredDataset(InMemoryDataset):
     def raw_file_names(self):
         return [
             "train_ind.txt", "test_ind.txt", "train.txt", "valid.txt"
+            # "train.txt", "valid.txt"
         ]
 
     def download(self):
         for url, path in zip(self.urls[self.name], self.raw_paths):
-            download_path = download_url(url % self.version, self.raw_dir)
+            if url.startswith("https://"):
+                download_path = download_url(url % self.version, self.raw_dir)
+            else:
+                shutil.copy2(url,self.raw_dir+os.path.basename(url))
+                download_path =self.raw_dir+os.path.basename(url)
             os.rename(download_path, path)
 
     def process(self):
         test_files = self.raw_paths[:2]
         train_files = self.raw_paths[2:]
+        # test_files = self.raw_paths[1]
+        # train_files = self.raw_paths[0]
 
         inv_train_entity_vocab = {}
         inv_test_entity_vocab = {}

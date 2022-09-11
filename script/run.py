@@ -212,7 +212,7 @@ if __name__ == "__main__":
         # for transductive setting, use the whole graph for filtered ranking
         filtered_data = Data(edge_index=dataset.data.target_edge_index, edge_type=dataset.data.target_edge_type)
         filtered_data = filtered_data.to(device)
-
+    logger.warning("start train_and_validate")
     train_and_validate(cfg, model, train_data, valid_data, filtered_data=filtered_data)
     if util.get_rank() == 0:
         logger.warning(separator)
@@ -221,4 +221,6 @@ if __name__ == "__main__":
     if util.get_rank() == 0:
         logger.warning(separator)
         logger.warning("Evaluate on test")
+
+    logger.warning("start test")
     test(cfg, model, test_data, filtered_data=filtered_data)

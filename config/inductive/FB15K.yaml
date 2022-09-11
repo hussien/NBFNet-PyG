@@ -1,9 +1,9 @@
 output_dir: scratch/experiments/
 
 dataset:
-  class: IndWN18RR
+  class: IndFB15K
   root: datasets/knowledge_graphs/
-  version: v1
+  version: FG
 
 model:
   class: NBFNet
@@ -13,12 +13,13 @@ model:
   aggregate_func: pna
   short_cut: yes
   layer_norm: yes
-  dependent: no
+  dependent: yes
+  remove_one_hop: yes
 
 task:
   num_negative: 32
   strict_negative: yes
-  adversarial_temperature: 1
+  adversarial_temperature: 0.5
   metric: [mr, mrr, hits@1, hits@3, hits@10, hits@10_50]
 
 optimizer:
@@ -28,5 +29,5 @@ optimizer:
 train:
   gpus: null
   batch_size: 64
-  num_epoch: 20
+  num_epoch: 2
   log_interval: 100

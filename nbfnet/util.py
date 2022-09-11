@@ -49,8 +49,12 @@ def literal_eval(string):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config", help="yaml configuration file", required=True)
+    # parser.add_argument("-c", "--config", help="yaml configuration file", required=True)
+    # parser.add_argument("-s", "--seed", help="random seed for PyTorch", type=int, default=1024)
+
+    parser.add_argument("-c", "--config", help="yaml configuration file", default='/media/hussein/UbuntuData/GithubRepos/NBFNet-PyG/config/inductive/FB15K.yaml')
     parser.add_argument("-s", "--seed", help="random seed for PyTorch", type=int, default=1024)
+
 
     args, unparsed = parser.parse_known_args()
     # get dynamic arguments defined in the config file
